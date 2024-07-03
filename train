@@ -1,0 +1,60 @@
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras import layers
+import matplotlib.pyplot as plt
+import math
+
+
+for ep in range(num_episodes):
+
+    sys_state = [0.0,0.0,1.0,0.0,5.0, 5.0]
+    prev_state = np.array([L(sys_state)/30.0, phi(sys_state)/np.pi,0])
+    episodic_reward = 0
+    
+    xc = []
+    yc = []
+    xce = []
+    yce = []
+
+    
+    #while True:
+    for i in range(num_steps):
+        
+        tf_prev_state = tf.expand_dims(tf.convert_to_tensor(prev_state), 0)
+
+        action = policy(tf_prev_state, ou_noise)
+
+        # Recieve state and reward from environment.
+        new_state, sys_state = transition(prev_state, sys_state, float(action[0]))
+        rew = reward(new_state)
+
+        buffer.record((prev_state, action, rew, new_state))
+        episodic_reward += rew
+
+        buffer.learn()
+        update_target(tau)
+
+        prev_state = new_state
+        xc.append(sys_state[0])
+        yc.append(sys_state[1])
+        
+        xce.append(sys_state[4])
+        yce.append(sys_state[5])
+        
+    xc1 = [sys_state[4]]
+    yc1 = [sys_state[5]]
+
+    ep_reward_list.append(episodic_reward)
+
+    # Mean of last 40 episodes
+    avg_reward = np.mean(ep_reward_list[-40:])
+    print("Episode * {} * Avg Reward is ==> {}".format(ep, avg_reward))
+    avg_reward_list.append(avg_reward)
+    plt.plot(xc,yc)
+    plt.plot(xce,yce)
+    plt.plot(xc1,yc1,'.')
+    title = 'Episode Number', ep+1
+    plt.title(title)
+    # plt.show()
+    plt.savefig("E:/AAA作业/深度学习/PURSUIT_EVADER/6/i = {}.jpg".format(ep) )
+    plt.close()
