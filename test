@@ -3,7 +3,8 @@ import tensorflow as tf
 from tensorflow.keras import layers
 import matplotlib.pyplot as plt
 import math
-
+from main import OUActionNoise
+from main import Buffer
 
 
 dt = 0.1
